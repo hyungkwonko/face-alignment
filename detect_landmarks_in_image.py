@@ -15,10 +15,12 @@ face_detector_kwargs = {
 fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._3D, device='cpu', flip_input=True,
                                   face_detector=face_detector, face_detector_kwargs=face_detector_kwargs)
 
-try:
-    input_img = io.imread('../test/assets/aflw-test.jpg')
-except FileNotFoundError:
-    input_img = io.imread('test/assets/aflw-test.jpg')
+# try:
+#     input_img = io.imread('../test/assets/aflw-test.jpg')
+# except FileNotFoundError:
+#     input_img = io.imread('test/assets/aflw-test.jpg')
+
+input_img = io.imread('test/assets/seed0297.png')
 
 preds = fa.get_landmarks(input_img)[-1]
 
@@ -67,4 +69,5 @@ for pred_type in pred_types.values():
 
 ax.view_init(elev=90., azim=90.)
 ax.set_xlim(ax.get_xlim()[::-1])
-plt.show()
+plt.savefig('./save.png')
+# plt.show()
