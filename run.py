@@ -7,9 +7,9 @@ import os
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--indir', help='input data', required=True)
-parser.add_argument('--outdir', help='save')
+parser.add_argument('--indir', help='input data', type=str, required=True) # 'exp'
 parser.add_argument('--device', help='device', type=str, choices=['cuda', 'cpu'], default='cuda')
+parser.add_argument('--plot', help='plot', type=bool, default=True)
 args = parser.parse_args()
 
 # Optionally set detector and some additional detector parameters
@@ -62,11 +62,12 @@ def get_landmark_dir(indir, plot=False):
 
             if plot:
                 input = io.imread(i)
-                outdir = i.replace('in', 'out')
+                outdir = i.replace('images', 'out')
                 save_image(input, outdir, pred)
 
-    np.save('./npy/files.npy', files)
-    np.save('./npy/landmarks.npy', landmarks)
+    npydir = indir.replace('images', 'npy')
+    np.save(os.path.join(npydir, 'files.npy'), files)
+    np.save(os.path.join(npydir, 'landmarks.npy'), landmarks)
 
     
 def save_image(input, outdir, pred):
@@ -89,12 +90,14 @@ if __name__ == '__main__':
     fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, device=args.device, flip_input=True,
                                   face_detector=face_detector, face_detector_kwargs=face_detector_kwargs)
 
-    if os.path.isdir(args.indir):  
+    indir = os.path.join('assets', args.indir, 'images')
+
+    if os.path.isdir(indir):  
         print("[INFO] It is a directory")  
-        get_landmark_dir(args.indir, plot=True)
-    elif os.path.isfile(args.indir):
+        get_landmark_dir(indir, plot=False)
+    elif os.path.isfile(indir):
         print("[INFO] It is a file")
-        outdir = args.indir.replace('in', 'out')
-        get_landmark(args.indir, outdir, plot=True)
+        outdir = indir.replace('images', 'out')
+        get_landmark(indir, outdir, plot=True)
     else:
         print("No file detected!")
